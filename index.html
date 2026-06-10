@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionário Endodontia — Técnica de Movimentos Oscilatórios</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g50:#EAF3DE;--g400:#639922;--g600:#3B6D11;--g900:#173404;
+  --r50:#FCEBEB;--r200:#F09595;--r400:#E24B4A;--r600:#A32D2D;--r800:#791F1F;
+  --t50:#E1F5EE;--t400:#1D9E75;--t600:#0F6E56;--t800:#085041;
+  --b50:#E6F1FB;--b600:#185FA5;
+  --a50:#FAEEDA;--a400:#EF9F27;--a600:#854F0B;--a900:#412402;
+  --p50:#F0E6FB;--p600:#6B34A0;
+  --gray50:#F1EFE8;--gray100:#D3D1C7;--gray200:#B4B2A9;--gray600:#5F5E5A;
+  --white:#fff;--black:#1a1a1a;
+  --rad:8px;--radlg:12px;
+  --sh:0 2px 8px rgba(0,0,0,.08);--shlg:0 4px 20px rgba(0,0,0,.12)
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:#f7f6f2;color:var(--black);line-height:1.7;font-size:16px}
+
+/* ── IDENTIFICATION SCREEN ── */
+#id-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.id-card{background:var(--white);border-radius:var(--radlg);border:1px solid #e4e2db;box-shadow:var(--shlg);max-width:480px;width:100%;overflow:hidden}
+.id-header{background:linear-gradient(135deg,#0F6E56,#1D9E75);color:white;padding:2rem;text-align:center}
+.id-header h1{font-size:20px;font-weight:700;margin-bottom:.4rem}
+.id-header p{font-size:14px;opacity:.88;line-height:1.55}
+.id-body{padding:2rem}
+.field-label{font-size:13px;font-weight:600;color:var(--gray600);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;display:block}
+.id-input{width:100%;border:1.5px solid #ddd;border-radius:var(--rad);padding:11px 14px;font-size:15px;color:var(--black);font-family:inherit;transition:border-color .18s;margin-bottom:1.1rem}
+.id-input:focus{outline:none;border-color:var(--t400)}
+.id-input.err{border-color:var(--r400)}
+.err-msg{font-size:12px;color:var(--r600);margin-top:-8px;margin-bottom:1rem;display:none}
+.err-msg.show{display:block}
+.start-btn{width:100%;background:var(--t600);color:white;border:none;border-radius:var(--rad);padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+.start-btn:hover{background:var(--t800)}
+.id-note{font-size:12px;color:var(--gray200);text-align:center;margin-top:1rem;line-height:1.55}
+
+/* ── QUIZ SCREEN ── */
+#quiz-screen{display:none}
+.site-header{background:var(--white);border-bottom:1px solid #e4e2db;padding:1.1rem 1.75rem;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.header-name{font-size:14px;font-weight:600;color:var(--gray600)}
+.header-name span{color:var(--t600)}
+.header-score{background:var(--t50);color:var(--t600);padding:5px 13px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#0F6E56,#1D9E75);color:white;padding:2.25rem 2rem;text-align:center}
+.hero h2{font-size:22px;font-weight:700;margin-bottom:.5rem}
+.hero p{font-size:14px;opacity:.88;max-width:520px;margin:0 auto}
+.progress-bar-wrap{background:var(--white);padding:.9rem 1.75rem;border-bottom:1px solid #e4e2db;position:sticky;top:59px;z-index:90}
+.prog-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--gray600);margin-bottom:4px;font-weight:500}
+.prog-track{height:5px;background:var(--gray50);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#1D9E75,#0F6E56);transition:width .4s ease}
+
+.main{max-width:760px;margin:1.75rem auto;padding:0 1.25rem 3rem}
+.qcard{background:var(--white);border-radius:var(--radlg);border:1px solid #e4e2db;box-shadow:var(--sh);margin-bottom:1.75rem;overflow:hidden;transition:box-shadow .2s}
+.qcard:hover{box-shadow:var(--shlg)}
+.qcard-hd{padding:.8rem 1.3rem;background:var(--gray50);border-bottom:1px solid #e4e2db;display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap}
+.qnum{font-size:12px;font-weight:600;color:var(--gray600);text-transform:uppercase;letter-spacing:.05em}
+.lvl{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap}
+.l1{background:var(--t50);color:var(--t600)}.l2{background:var(--b50);color:var(--b600)}
+.l3{background:var(--a50);color:var(--a600)}.l4{background:#FAECE7;color:#993C1D}
+.l5{background:var(--p50);color:var(--p600)}
+.qcard-bd{padding:1.3rem 1.4rem}
+.case-box{background:#FFF8ED;border:1px solid #FAC775;border-left:4px solid #EF9F27;border-radius:var(--rad);padding:.9rem 1.1rem;margin-bottom:1.1rem;font-size:13.5px;line-height:1.7;color:var(--a900)}
+.case-box strong{display:block;margin-bottom:.35rem;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--a600)}
+.qtext{font-size:14.5px;color:var(--black);line-height:1.75;margin-bottom:1.25rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt-item{display:flex;flex-direction:column}
+.opt-btn{display:flex;align-items:flex-start;gap:11px;background:var(--white);border:1.5px solid #ddd;border-radius:var(--rad);padding:10px 14px;cursor:pointer;text-align:left;font-size:13.5px;color:var(--black);line-height:1.6;transition:all .18s;width:100%}
+.opt-btn:hover:not(:disabled){border-color:var(--t400);background:var(--t50)}
+.opt-btn:disabled{cursor:default}
+.opt-l{font-weight:700;min-width:18px;font-size:12px;margin-top:1px;flex-shrink:0;color:var(--gray600)}
+.opt-t{flex:1}
+.opt-btn.correct{background:var(--g50);border-color:var(--g400);border-width:2px}
+.opt-btn.correct .opt-l{color:var(--g600)}
+.opt-btn.wrong{background:var(--r50);border-color:var(--r400);border-width:2px}
+.opt-btn.wrong .opt-l{color:var(--r600)}
+.opt-btn.dimmed{opacity:.35}
+.fb{margin-top:6px;border-radius:var(--rad);padding:10px 14px;font-size:13px;line-height:1.7;display:none;animation:fadeIn .3s ease}
+.fb.vis{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.fb-ok{background:var(--g50);border:1px solid #97C459;color:var(--g900)}
+.fb-err{background:var(--r50);border:1px solid var(--r200);color:var(--r800)}
+.fb-lbl{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.fb-ok .fb-lbl{color:var(--g600)}.fb-err .fb-lbl{color:var(--r600)}
+
+/* ── RESULTS PANEL ── */
+#results-panel{display:none;background:var(--white);border-radius:var(--radlg);border:1px solid #e4e2db;box-shadow:var(--shlg);margin-bottom:2rem;overflow:hidden}
+#results-panel.vis{display:block;animation:fadeIn .5s ease}
+.res-hero{background:linear-gradient(135deg,#0F6E56,#1D9E75);color:white;padding:2.25rem 1.75rem;text-align:center}
+.score-ring{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;margin:0 auto 1.25rem}
+.score-inner{position:absolute;width:88px;height:88px;border-radius:50%;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.s-big{font-size:28px;font-weight:700;color:var(--t600);line-height:1}
+.s-den{font-size:13px;color:var(--gray600)}
+.res-title{font-size:20px;font-weight:700;margin-bottom:.35rem}
+.res-pct{font-size:15px;opacity:.9}
+.res-msg{font-size:13.5px;opacity:.85;max-width:480px;margin:.9rem auto 0;line-height:1.6}
+.res-body{padding:1.5rem 1.5rem 1.75rem}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.scard{border-radius:var(--rad);padding:.9rem 1.1rem}
+.scard.ok{background:var(--g50);border:1px solid #97C459}
+.scard.ng{background:var(--r50);border:1px solid var(--r200)}
+.sc-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
+.ok .sc-lbl{color:var(--g600)}.ng .sc-lbl{color:var(--r600)}
+.sc-num{font-size:26px;font-weight:700;line-height:1}
+.ok .sc-num{color:var(--g600)}.ng .sc-num{color:var(--r400)}
+.sc-sub{font-size:12px;margin-top:3px}
+.ok .sc-sub{color:var(--g600)}.ng .sc-sub{color:var(--r600)}
+.sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray600);margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--gray100)}
+.c-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1.5rem}
+.c-item{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;line-height:1.5}
+.chk{width:19px;height:19px;border-radius:50%;background:var(--g50);border:1.5px solid var(--g400);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.chk svg{width:10px;height:10px}
+.c-item .qtag{font-size:12px;font-weight:600;color:var(--g600)}
+.w-list{display:flex;flex-direction:column;gap:12px;margin-bottom:1.5rem}
+.w-item{background:var(--r50);border:1px solid var(--r200);border-left:4px solid var(--r400);border-radius:var(--rad);padding:.9rem 1rem}
+.w-num{font-size:11px;font-weight:700;color:var(--r600);text-transform:uppercase;letter-spacing:.04em}
+.w-theme{font-size:13.5px;font-weight:600;color:var(--r800);margin:.25rem 0}
+.w-tip{font-size:12.5px;color:var(--r600);line-height:1.6}
+.wpill{display:inline-block;background:white;border:1px solid var(--r200);border-radius:99px;padding:2px 9px;font-size:11px;font-weight:600;color:var(--r600);margin-top:5px;margin-right:3px}
+.rec-box{background:var(--a50);border:1px solid #FAC775;border-radius:var(--rad);padding:1rem 1.1rem;margin-bottom:1.5rem}
+.rec-box .sec-title{color:var(--a600)}.rec-box .sec-title::after{background:#FAC775}
+.rec-list{display:flex;flex-direction:column;gap:7px}
+.rec-i{font-size:13.5px;color:var(--a900);display:flex;gap:7px;align-items:flex-start;line-height:1.55}
+.rec-bul{color:var(--a400);font-weight:700;flex-shrink:0}
+
+/* ── SHARE BOX ── */
+.share-box{background:#F1EFE8;border:1px solid var(--gray100);border-radius:var(--rad);padding:1.1rem 1.25rem;margin-bottom:1.5rem}
+.share-box .sec-title{color:var(--gray600)}.share-box .sec-title::after{background:var(--gray100)}
+.share-desc{font-size:13.5px;color:var(--gray600);margin-bottom:.85rem;line-height:1.6}
+.share-text{width:100%;background:var(--white);border:1px solid var(--gray100);border-radius:var(--rad);padding:.75rem 1rem;font-size:12.5px;font-family:monospace;color:var(--black);resize:none;line-height:1.55}
+.share-row{display:flex;gap:8px;margin-top:.7rem;flex-wrap:wrap}
+.share-btn{padding:8px 18px;border-radius:var(--rad);border:1px solid var(--gray200);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;color:var(--black);transition:all .18s}
+.share-btn:hover{background:var(--gray50)}
+.share-btn.primary{background:var(--t600);color:white;border-color:transparent}
+.share-btn.primary:hover{background:var(--t800)}
+
+.action-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.act-btn{padding:10px 24px;border-radius:var(--rad);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.act-btn.primary{background:var(--t600);color:white;border:none}
+.act-btn.primary:hover{background:var(--t800)}
+.act-btn.ghost{background:transparent;color:var(--t600);border:1.5px solid var(--t600)}
+.act-btn.ghost:hover{background:var(--t50)}
+
+@media print{
+  .site-header,.progress-bar-wrap,.hero,.qcard,.share-btn,
+  .action-row,.start-btn,#id-screen{display:none!important}
+  #results-panel{box-shadow:none;border:1px solid #ccc}
+  body{background:white}
+}
+@media(max-width:600px){
+  .stat-grid{grid-template-columns:1fr}
+  .site-header{flex-direction:column;align-items:flex-start}
+  .main{padding:0 .75rem 2.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ IDENTIFICATION SCREEN ═══════════════ -->
+<div id="id-screen">
+  <div class="id-card">
+    <div class="id-header">
+      <h1>Questionário de Endodontia</h1>
+      <p>Técnica de Movimentos Oscilatórios<br>Pós-Graduação Lato Sensu — Sala de Aula Invertida</p>
+    </div>
+    <div class="id-body">
+      <label class="field-label" for="inp-name">Nome completo</label>
+      <input class="id-input" id="inp-name" type="text" placeholder="Ex.: Maria Silva Santos" autocomplete="name">
+      <div class="err-msg" id="err-name">Por favor, informe seu nome completo.</div>
+
+      <label class="field-label" for="inp-mat">Matrícula / Código do aluno</label>
+      <input class="id-input" id="inp-mat" type="text" placeholder="Ex.: 2024001">
+      <div class="err-msg" id="err-mat">Por favor, informe sua matrícula.</div>
+
+      <label class="field-label" for="inp-turma">Turma</label>
+      <input class="id-input" id="inp-turma" type="text" placeholder="Ex.: Endodontia 2024/1">
+      <div class="err-msg" id="err-turma">Por favor, informe sua turma.</div>
+
+      <button class="start-btn" onclick="startQuiz()">Iniciar questionário →</button>
+      <p class="id-note">Seus dados serão usados exclusivamente para identificação do resultado<br>junto ao professor. Nenhuma informação é enviada a terceiros.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ QUIZ SCREEN ═══════════════ -->
+<div id="quiz-screen">
+  <header class="site-header">
+    <div class="header-name">Aluno: <span id="hdr-name">—</span></div>
+    <div class="header-score" id="hdr-score">0 / 9</div>
+  </header>
+
+  <div class="hero">
+    <h2>Técnica de Movimentos Oscilatórios</h2>
+    <p>Responda todas as questões. Ao final, seu resultado detalhado será gerado para envio ao professor.</p>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="prog-labels">
+      <span id="prog-txt">0 de 9 questões respondidas</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <main class="main" id="main-content"></main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  QUESTIONS DATA
+// ═══════════════════════════════════════════════
+const Q = [
+  {level:1,lbl:"Nível I — Conhecimento",theme:"Instrumento principal da técnica e sua geometria",
+   tip:"Retorne ao texto introdutório e compare a geometria da lima 'K' (seção quadriculada) com a Hedstroem (seção triangular), atentando para a amplitude de rotação necessária em cada caso.",
+   text:"De acordo com o texto-base, qual é o instrumento preconizado como principal na técnica de movimentos oscilatórios e qual característica geométrica fundamenta essa escolha?",
+   opts:["A lima Hedstroem, cuja seção triangular proporciona maior agressividade de corte e necessita de apenas 60° de rotação para completar um ciclo de atuação.",
+         "A lima tipo 'K', por sua seção quadriculada que confere maior massa, segurança tátil e necessidade de apenas 1/4 de volta para completar um círculo de atuação.",
+         "O alargador de seção triangular, indicado pelo autor por sua maior flexibilidade em canais curvos de classe III.",
+         "A lima Flex-R, cuja geometria reduzida diminui o risco de fratura e foi expressamente indicada pelo autor para a fase de exploração.",
+         "O instrumento rotatório de níquel-titânio (NiTi), por seu superior controle apical e memória de forma em canais curvos."],
+   ok:1,
+   fbOk:"Correto. O autor fundamenta a escolha da lima 'K' em sua seção quadriculada, que lhe confere maior massa volumosa, tornando-a mais segura tactilmente e exigindo apenas 1/4 de volta (90°) para completar seu círculo de atuação.",
+   fbWrong:["Incorreto. A lima Hedstroem possui seção triangular e requer 1/3 de volta (120°) — não 60°. O autor elege a lima 'K' pela seção quadriculada e maior massa.","","Incorreto. O alargador de seção triangular não é o instrumento principal. Sua maior necessidade de movimentação rotacional o torna menos adequado à técnica oscilatória.","Incorreto. A Flex-R é mencionada em manobras auxiliares, não como instrumento central. O autor indica explicitamente a lima 'K'.","Incorreto. O texto é de 1992, anterior à consolidação dos sistemas NiTi rotatórios. A técnica é integralmente manual, baseada na lima 'K'."]},
+
+  {level:1,lbl:"Nível I — Conhecimento",theme:"Fases operacionais da técnica de movimentos oscilatórios",
+   tip:"Releia as Tabelas 10-4 e 10-5 do texto, que resumem as quatro fases da técnica para canais de classes II e III.",
+   text:"Segundo o texto, quais são as quatro fases que compõem a técnica de movimentos oscilatórios no preparo de canais de classes II e III, na ordem correta?",
+   opts:["Fase I: irrigação e limpeza passiva; Fase II: odontometria; Fase III: preparo biomecânico; Fase IV: obturação.",
+         "Fase I: exploração do canal até o CDR; Fase II: preparo apical; Fase III: escalonamento telescópico; Fase IV: refinamento das paredes em toda a extensão.",
+         "Fase I: acesso coronário; Fase II: localização do forame; Fase III: ampliação progressiva; Fase IV: curativo de demora.",
+         "Fase I: determinação do CT; Fase II: escalonamento; Fase III: refinamento; Fase IV: recapitulação final.",
+         "Fase I: instrumentação rotatória inicial; Fase II: preparo apical manual; Fase III: irrigação final com EDTA; Fase IV: obturação termoplástica."],
+   ok:1,
+   fbOk:"Correto. As quatro fases são: Fase I (exploração até o CDR, limas 06/08/10/15), Fase II (preparo apical — zona crítica apical, determinação do CT), Fase III (escalonamento telescópico — recuo milimétrico progressivo) e Fase IV (refinamento das paredes em toda a extensão).",
+   fbWrong:["Incorreto. Obturação e curativo de demora não integram as fases do preparo descritas pelo autor.","","Incorreto. Acesso coronário e localização do forame são etapas preliminares às quatro fases da técnica oscilatória propriamente dita.","Incorreto. O CT é determinado dentro da Fase II; a recapitulação é manobra transversal a todas as fases, não uma fase autônoma.","Incorreto. Instrumentação rotatória e obturação termoplástica não integram esta técnica manual."]},
+
+  {level:2,lbl:"Nível II — Compreensão",theme:"Conceito de exploração como manobra única e suas implicações",
+   tip:"Releia o início da 'Fase I — Exploração do Canal Radicular' e identifique a simultaneidade entre limpeza inicial, localização e instrumentação inicial.",
+   text:"O autor afirma que a exploração ou cateterismo constitui 'uma só manobra'. Qual é o fundamento desta afirmação e sua principal implicação clínica?",
+   opts:["A exploração é uma manobra rápida e sem irrigação, cujo objetivo exclusivo é determinar o comprimento radiográfico do dente antes da instrumentação.",
+         "A exploração deve ser realizada em uma única sessão clínica, independentemente da complexidade morfológica do canal.",
+         "A limpeza inicial ao longo de todo o canal e a instrumentação inicial são etapas simultâneas e interdependentes; o êxito desta manobra determina o prognóstico das intervenções subsequentes.",
+         "A manobra única consiste na introdução de uma lima de grande calibre até o ápice, garantindo a abertura do canal em um único tempo operatório.",
+         "A exploração e a obturação constituem uma manobra única quando realizadas em sessão única, conforme preconizado pelo autor em casos de necrose."],
+   ok:2,
+   fbOk:"Correto. A exploração integra simultaneamente a limpeza inicial e a instrumentação inicial — daí 'uma só manobra'. O êxito determina o prognóstico de tudo que se segue: 'Se bem sucedida, dominamos o canal', afirma o autor.",
+   fbWrong:["Incorreto. O autor não vincula 'manobra única' à ausência de irrigação. A irrigação copiosa com hipoclorito de sódio é recomendada durante toda esta fase.","Incorreto. 'Uma só manobra' refere-se à integração funcional de objetivos clínicos distintos, não à sessão única de atendimento.","","Incorreto. O autor recomenda iniciar com limas de calibres reduzidos (nº 06 ou 08) e limpeza passiva prévia — não introdução de limas de grande calibre.","Incorreto. A relação entre exploração e obturação não tem fundamento no texto; os conceitos são de naturezas distintas."]},
+
+  {level:2,lbl:"Nível II — Compreensão",theme:"Dinâmica combinatória dos movimentos oscilatórios e deslocamento longitudinal",
+   tip:"Releia o item C da Fase I e o início da Fase II, atentando à frequência (2-3 ciclos/s), à amplitude (1/4 a 1/2 volta) e ao intervalo de intercalação do deslocamento longitudinal (a cada 10-15 oscilações, 1 a 1,5 mm).",
+   text:"Na técnica de movimentos oscilatórios, como se articulam os movimentos oscilatório e longitudinal, e qual é o objetivo desta combinação?",
+   opts:["Os movimentos oscilatórios giram a lima de 1/4 a 1/2 volta alternada (horário/anti-horário), a 2-3 ciclos/s; a cada 10-15 oscilações intercala-se deslocamento vertical de 1-1,5 mm. Esta combinação promove instrumentação homogênea de todas as paredes, evitando transportação e degrau.",
+         "Os movimentos oscilatórios são exclusivamente horários, com deslocamento vertical contínuo e vigoroso para apical, visando aumentar a velocidade de corte.",
+         "O deslocamento longitudinal ocorre apenas na retirada do instrumento; os movimentos oscilatórios ocorrem apenas na introdução apical.",
+         "A combinação visa substituir integralmente o uso de irrigantes, sendo a agitação mecânica suficiente para a limpeza do canal.",
+         "Os movimentos oscilatórios têm amplitude de 1/2 volta em sentido único (anti-horário), intercalados com deslocamentos verticais de 3 mm para penetração progressiva."],
+   ok:0,
+   fbOk:"Correto. Movimentos alternados de 1/4 a 1/2 volta (2-3 ciclos/s), intercalados a cada 10-15 oscilações com deslocamento vertical de 1-1,5 mm. Esta dinâmica permite corte circunferencial homogêneo e avanço controlado — impossível com limagem ou bombeamento convencional.",
+   fbWrong:["","Incorreto. Movimento exclusivamente horário e deslocamento contínuo para apical descrevem a limagem convencional, criticada pelo autor por causar extrusão de debris, transportação e degrau.","Incorreto. Os dois componentes são executados de forma integrada e intercalada — não separados em fases de introdução e retirada.","Incorreto. A irrigação com hipoclorito de sódio a 2,6% é elemento indissociável da técnica em todas as fases — nunca substituída pelos movimentos mecânicos.","Incorreto. Os movimentos são alternados (não unidirecionais) e o deslocamento vertical é de 1-1,5 mm (não 3 mm)."]},
+
+  {level:3,lbl:"Nível III — Análise",theme:"Referenciais de profundidade: CDR, CPC e CT",
+   tip:"Retome a Fase I — Técnica da Exploração e o início da Fase II — Preparo Apical, onde o autor define os três referenciais e a fórmula de dedução do CT a partir do CPC.",
+   text:"O autor utiliza três referenciais de profundidade: CDR, CPC e CT. Qual alternativa apresenta a correspondência CORRETA entre cada referencial, sua forma de obtenção e função clínica?",
+   opts:["CDR e CPC são sinônimos que designam o comprimento real do canal; o CT é fixado em 1 mm aquém do forame anatômico em todos os casos.",
+         "O CPC é determinado exclusivamente por localizador eletrônico; o CDR é obtido por tomografia; o CT é estabelecido antes do acesso coronário.",
+         "O CDR é o limite definitivo de instrumentação apical; o CPC orienta apenas a obturação; o CT é calculado somando-se 0,5 mm ao CDR.",
+         "O CDR é obtido pela medição radiográfica prévia e orienta a curvatura do instrumento; o CPC é determinado clinicamente (limas nº 10 e 15) na zona crítica apical junto ao forame; o CT é deduzido do CPC subtraindo-se 0,25 mm, representando o limite apical seguro para instrumentação.",
+         "CDR, CPC e CT designam o mesmo referencial em diferentes sistemas de mensuração, sendo intercambiáveis na prática clínica."],
+   ok:3,
+   fbOk:"Correto. CDR: medição radiográfica, orienta a curvatura do instrumento. CPC: determinado clinicamente com limas nº 10 e 15, localizado na zona crítica apical. CT: CPC menos 0,25 mm — limite apical seguro definitivo para toda a instrumentação.",
+   fbWrong:["Incorreto. CDR e CPC não são sinônimos: o CDR é estimativa radiográfica inicial; o CPC é determinado clinicamente. O CT não é fixo em 1 mm — é deduzido individualmente do CPC de cada caso.","Incorreto. O localizador eletrônico é recurso auxiliar, não exclusivo, para o CPC. O CDR é obtido por radiografia convencional, não tomografia. O CT não pode ser estabelecido antes do acesso.","Incorreto. O CDR não é limite de instrumentação — essa função cabe ao CT. O CPC não orienta apenas a obturação. A fórmula é subtração de 0,25 mm do CPC, não adição ao CDR.","","Incorreto. CDR, CPC e CT têm definições, formas de obtenção e funções clínicas distintas e sequenciais — não são intercambiáveis."]},
+
+  {level:3,lbl:"Nível III — Análise",theme:"Manobra de recapitulação: mecanismo, instrumento e função sistêmica",
+   tip:"Releia as Fases II, III e IV da técnica, identificando quando e como a recapitulação é executada, qual instrumento a realiza (M1) e sua função preventiva integrada à irrigação.",
+   text:"O autor propõe a recapitulação como manobra sistemática em todas as fases da técnica. Analise criticamente seu mecanismo e função clínica:",
+   opts:["A recapitulação consiste na reutilização de todas as limas já empregadas, do maior para o menor calibre, para reconfirmar a conicidade ao término de cada fase.",
+         "É indicada exclusivamente na Fase IV (refinamento), com a lima Memória 2, para verificar a acomodação do cone de guta-percha.",
+         "É executada com a lima de patência nº 10 (Memória 1 — M1) até o CPC após cada mudança de instrumento, simultaneamente ao gotejamento de hipoclorito de sódio; mantém a patência foraminal, promove irrigação intracanal por pincelamento e previne obstruções por debris.",
+         "Substitui a irrigação nas etapas mais avançadas, quando o canal já está suficientemente alargado para dispensar o uso de hipoclorito.",
+         "É indicada apenas em canais de classe III, sendo desnecessária em canais de classe I onde a lima de patência penetra sem resistência."],
+   ok:2,
+   fbOk:"Correto. A recapitulação usa a lima nº 10 (M1) até o CPC após cada mudança de instrumento, com gotejamento simultâneo de hipoclorito de sódio — promovendo irrigação ativa por pincelamento das paredes, patência foraminal e prevenção de tampão apical, tudo em uma manobra integrada.",
+   fbWrong:["Incorreto. A recapitulação não reutiliza todas as limas na ordem inversa. É especificamente a lima nº 10 (M1) reconduzida ao CPC, não o conjunto instrumental.","Incorreto. A recapitulação não é restrita à Fase IV. O autor a preconiza após cada mudança de instrumento nas Fases II, III e IV. M2 é referência de obturação, não de recapitulação.","","Incorreto. Em nenhum momento o autor indica a suspensão da irrigação. Irrigação e recapitulação são simultâneas e complementares em todas as fases.","Incorreto. A recapitulação é indicada sistematicamente em todos os tipos de canais — sua aplicação universal previne tampão apical independentemente da classe morfológica."]},
+
+  {level:3,lbl:"Nível III — Análise (Zona Crítica Apical)",theme:"Zona crítica apical e correlação com literatura contemporânea",
+   tip:"Releia a Fase II — Preparo Apical e articule com a literatura atual sobre 'região apical de maior risco', transportação, zip apical e perda do CT em canais com curvatura severa.",
+   text:"O autor utiliza o conceito de 'zona crítica apical' como fundamento da Fase II. Qual alternativa melhor descreve este conceito e sua correspondência com o que a literatura contemporânea denomina 'região apical de maior risco'?",
+   opts:["Equivale ao forame apical anatômico e não possui correspondência com nenhum conceito contemporâneo, sendo nomenclatura obsoleta.",
+         "Refere-se ao terço médio da raiz, onde a curvatura é mais acentuada e o risco de fratura instrumental é maior; não tem relação com controle do comprimento de trabalho.",
+         "É uma região onde a irrigação com hipoclorito não deve ser realizada, pois a pressão do líquido causaria extrusão apical; a literatura contemporânea não usa conceito análogo.",
+         "Equivale estritamente à constrição apical (CDC), referindo-se apenas ao ponto de menor diâmetro do canal, sem implicações para a técnica de instrumentação.",
+         "Designa a região periforaminal onde manobras de alta pressão podem provocar transportação, degrau, extrusão de debris e perda do CT; articula-se diretamente com a 'região apical de maior risco' da literatura atual — terço apical curvo e constrição apical — onde rigidez do instrumento e pressão exercida determinam o grau de desvio foraminal, riscos mitigados pela técnica oscilatória de curta amplitude."],
+   ok:4,
+   fbOk:"Correto. Toda a Fase II é estruturada em torno da preservação da zona crítica apical: movimentos de curtíssima amplitude e mínima pressão apical para evitar transportação, degrau e extrusão de debris. A literatura contemporânea (diretrizes ESE; estudos em PubMed) confirma o terço apical curvo como região de maior risco biomecânico, onde os princípios do autor permanecem plenamente válidos.",
+   fbWrong:["Incorreto. Não é nomenclatura obsoleta nem se limita ao forame anatômico. Seu correspondente contemporâneo — 'região apical de maior risco' — é amplamente discutido na literatura atual.","Incorreto. Refere-se à região próxima ao forame, não ao terço médio. Sua definição está diretamente vinculada ao controle do CT e à prevenção de transportação apical.","Incorreto. O autor não contraindica irrigação na zona crítica apical — ao contrário, a preconiza em todas as fases. O que contraindica são os movimentos de bombeamento agressivo.","Incorreto. O conceito é mais abrangente que a CDC: engloba toda a região periforaminal onde movimentos inadequados causam transportação e perda do CT — não apenas um ponto anatômico.",""]},
+
+  {level:4,lbl:"Nível IV — Avaliação",theme:"Crítica à limagem convencional: argumentação biomecânica do autor",
+   tip:"Releia a seção introdutória da técnica e identifique os riscos específicos atribuídos à 'dinâmica convencional de limagem' comparados à proposta oscilatória.",
+   text:"O autor afirma que a dinâmica convencional de 'limagem' é potencialmente danosa. Avalie criticamente esta afirmação à luz do texto:",
+   opts:["É infundada: a limagem convencional é o método mais eficaz de desbridamento, superior à técnica oscilatória em termos de limpeza das paredes.",
+         "É biomecânica e clinicamente consistente: a limagem, com ação contínua de bombeamento, mantém o instrumento sob pressão apical constante, favorecendo extrusão de debris, transportação e degrau — riscos mitigados pelos movimentos oscilatórios de curta amplitude, baixa pressão e direcionalidade alternada.",
+         "É parcialmente correta: a limagem é danosa apenas em canais retos, sendo recomendada pelo próprio autor para canais curvos de classe III.",
+         "É incorreta porque o autor descreve, em certas fases da técnica oscilatória, movimentos idênticos à limagem convencional, contradizendo sua crítica.",
+         "Tem apenas relevância histórica: na época do texto não existiam evidências sobre os riscos da limagem, sendo a crítica baseada apenas em impressão clínica subjetiva."],
+   ok:1,
+   fbOk:"Correto. O argumento biomecânico é preciso: a ação de bombeamento mantém pressão apical constante e favorece extrusão de material séptico para os tecidos periapicais. A técnica oscilatória, com amplitude curta e direcionalidade alternada, elimina sistematicamente estes riscos — argumentação que encontra respaldo na literatura endodôntica contemporânea.",
+   fbWrong:["Incorreto. O texto demonstra, com base clínica e laboratorial, que a limagem convencional oferece riscos significativos de transportação e extrusão de debris — não superioridade em limpeza.","","Incorreto. O autor apresenta a técnica oscilatória como especialmente indicada para canais curvos de classes II e III — não recomenda a limagem nestes casos.","Incorreto. Os movimentos oscilatórios alternados de 1/4-1/2 volta com deslocamento vertical de 1-1,5 mm são conceitualmente distintos da limagem: são bidirecionais, de curta amplitude e baixa pressão apical.","Incorreto. A argumentação está fundamentada em princípios biomecânicos sistematizados. Riscos de extrusão apical e transportação já eram objeto de investigação científica nas décadas de 1970-80."]},
+
+  {level:5,lbl:"Nível V — Caso Clínico",isCase:true,
+   caseText:"Paciente adulto, 38 anos, com dor espontânea e à percussão no elemento 36, diagnóstico de necrose pulpar e periodontite apical crônica. Tomografia cone-beam: canais mesiovestibular e mesiolingual severamente curvos (Schneider > 25°), comprimento radicular de 22 mm, espessura dentinária reduzida na zona de perigo. Profissional com formação apenas em técnicas manuais, dispõe de limas tipo 'K' e Hedstroem, irrigação e localizador apical eletrônico.",
+   theme:"Integração crítica: técnica oscilatória vs. sistemas NiTi — tomada de decisão clínica",
+   tip:"Articule os princípios da técnica oscilatória (glide path manual, anticurvatura, recapitulação, zona crítica apical) com as evidências contemporâneas sobre instrumentação NiTi em canais severamente curvos (ângulo de Schneider > 25°) e os critérios da ESE.",
+   text:"Considerando os princípios da técnica de movimentos oscilatórios e os avanços tecnológicos contemporâneos, qual alternativa apresenta a análise mais crítica e fundamentada para este caso?",
+   opts:["A técnica de movimentos oscilatórios de 1992 é suficiente e igualmente eficaz, dispensando qualquer recurso adicional.",
+         "A única conduta adequada é o encaminhamento imediato para serviço com NiTi rotatório, pois a técnica manual é contraindicada com Schneider > 25°.",
+         "A conduta mais indicada é o alargamento intensivo com limas de grande calibre em movimentos de limagem, garantindo limpeza efetiva das paredes.",
+         "Os princípios da técnica oscilatória — glide path manual progressivo (limas 06-15), movimentos bidirecionais de curta amplitude, recapitulação sistemática e irrigação copiosa — permanecem válidos e articulam-se com protocolos NiTi contemporâneos. Para Schneider > 25° e espessura dentinária reduzida, evidências atuais apontam que NiTi flexível oferece menor risco de transportação e fratura. O protocolo ideal combina o glide path manual do autor com instrumentação NiTi; na impossibilidade, a técnica manual é executável com manobras anticurvatura, preparo incremental e controle rigoroso da zona crítica apical.",
+         "A decisão deve ser guiada exclusivamente pela disponibilidade de recursos do serviço, sem necessidade de considerar morfologia do canal, espessura dentinária ou princípios biomecânicos."],
+   ok:3,
+   fbOk:"Análise exemplar. Os princípios da técnica oscilatória — especialmente o glide path manual progressivo — são reconhecidos pela literatura atual (ESE; Berutti et al.; Pasqualini et al.) como etapa obrigatória antes de qualquer sistema mecanizado. A necessidade de NiTi em canais com curvatura severa é sustentada por evidências de alto nível (PubMed; CINAHL). Esta integração crítica entre fundamentos históricos e tecnologia contemporânea, orientada pelo melhor interesse do paciente, é a competência central de um especialista atuante nos CEOs do SUS.",
+   fbWrong:["Incorreto. Evidências de três décadas demonstram que, em canais com curvatura severa, instrumentos NiTi oferecem menor risco de transportação e fratura do que técnicas manuais isoladas.","Incorreto. Os princípios do glide path manual — recomendados pelas principais sociedades de endodontia — permanecem como etapa prévia obrigatória à instrumentação mecanizada. A técnica manual não é absolutamente contraindicada.","Incorreto. O alargamento agressivo com limas de grande calibre em canais curvos com espessura dentinária reduzida aumenta drasticamente o risco de perfuração na zona de perigo, degrau e fratura de instrumento.","","Incorreto. A decisão clínica deve integrar morfologia do canal, princípios biomecânicos, competências do profissional e recursos disponíveis — nunca baseada exclusivamente na disponibilidade de materiais."]}
+];
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let studentName='', studentMat='', studentTurma='';
+let answered=new Array(Q.length).fill(false);
+let selected=new Array(Q.length).fill(null);
+let score=0;
+const LTR=['A','B','C','D','E'];
+const LC=['l1','l1','l2','l2','l3','l3','l3','l4','l5'];
+
+// ═══════════════════════════════════════════════
+//  IDENTIFICATION
+// ═══════════════════════════════════════════════
+function startQuiz(){
+  const n=document.getElementById('inp-name').value.trim();
+  const m=document.getElementById('inp-mat').value.trim();
+  const t=document.getElementById('inp-turma').value.trim();
+  let ok=true;
+  ['name','mat','turma'].forEach((k,i)=>{
+    const v=[n,m,t][i];
+    const inp=document.getElementById('inp-'+k);
+    const err=document.getElementById('err-'+k);
+    if(!v){inp.classList.add('err');err.classList.add('show');ok=false;}
+    else{inp.classList.remove('err');err.classList.remove('show');}
+  });
+  if(!ok)return;
+  studentName=n; studentMat=m; studentTurma=t;
+  document.getElementById('hdr-name').textContent=n;
+  document.getElementById('id-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  buildAll();
+}
+
+// ═══════════════════════════════════════════════
+//  PROGRESS
+// ═══════════════════════════════════════════════
+function updateProgress(){
+  const done=answered.filter(Boolean).length;
+  const pct=Math.round((done/Q.length)*100);
+  document.getElementById('prog-txt').textContent=`${done} de ${Q.length} questões respondidas`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('hdr-score').textContent=`${score} / ${Q.length}`;
+  if(done===Q.length) showResults();
+}
+
+// ═══════════════════════════════════════════════
+//  SELECT
+// ═══════════════════════════════════════════════
+function selectOpt(qi,oi){
+  if(answered[qi])return;
+  selected[qi]=oi; answered[qi]=true;
+  if(oi===Q[qi].ok)score++;
+  renderQ(qi); updateProgress();
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER QUESTION
+// ═══════════════════════════════════════════════
+function renderQ(qi){
+  const q=Q[qi];
+  const card=document.getElementById('qc-'+qi);
+  if(!card)return;
+  card.querySelector('.qcard-hd').innerHTML=
+    `<span class="qnum">Questão ${qi+1} de ${Q.length}</span>
+     <span class="lvl ${LC[qi]}">${q.lbl}</span>`;
+  const caseHtml=q.isCase?`<div class="case-box"><strong>Caso Clínico</strong>${q.caseText}</div>`:'';
+  const optsHtml=q.opts.map((opt,i)=>{
+    let cls='opt-btn';
+    if(answered[qi]){
+      if(i===q.ok)cls+=' correct';
+      else if(i===selected[qi])cls+=' wrong';
+      else cls+=' dimmed';
+    }
+    let fb='';
+    if(answered[qi]){
+      if(i===q.ok)fb=`<div class="fb fb-ok vis"><div class="fb-lbl">✓ Resposta correta</div>${q.fbOk}</div>`;
+      else if(i===selected[qi]){
+        const t=q.fbWrong[i]||'Esta alternativa não corresponde ao texto. Retome a leitura.';
+        fb=`<div class="fb fb-err vis"><div class="fb-lbl">✗ Incorreto — reflita sobre o conceito</div>${t}</div>`;
+      }
+    }
+    return `<div class="opt-item">
+      <button class="${cls}" onclick="selectOpt(${qi},${i})" ${answered[qi]?'disabled':''}>
+        <span class="opt-l">${LTR[i]}.</span><span class="opt-t">${opt}</span>
+      </button>${fb}</div>`;
+  }).join('');
+  card.querySelector('.qcard-bd').innerHTML=`${caseHtml}<p class="qtext">${q.text}</p><div class="opts">${optsHtml}</div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  BUILD ALL
+// ═══════════════════════════════════════════════
+function buildAll(){
+  const main=document.getElementById('main-content');
+  main.innerHTML='';
+  const panel=document.createElement('div');
+  panel.id='results-panel'; main.appendChild(panel);
+  Q.forEach((_,i)=>{
+    const c=document.createElement('div');
+    c.className='qcard'; c.id='qc-'+i;
+    c.innerHTML='<div class="qcard-hd"></div><div class="qcard-bd"></div>';
+    main.appendChild(c); renderQ(i);
+  });
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════════
+//  RESULTS
+// ═══════════════════════════════════════════════
+function showResults(){
+  const panel=document.getElementById('results-panel');
+  if(!panel)return;
+  const pct=Math.round((score/Q.length)*100);
+
+  // Declare indexes FIRST — used by everything below
+  const corrIdxs=Q.map((_,i)=>i).filter(i=>selected[i]===Q[i].ok);
+  const wrongIdxs=Q.map((_,i)=>i).filter(i=>answered[i]&&selected[i]!==Q[i].ok);
+
+  let perfTitle,perfMsg,ringColor;
+  if(pct>=89){perfTitle='Desempenho Excelente';perfMsg='Você demonstrou domínio consistente do conteúdo técnico-científico, com capacidade analítica e integração de conhecimentos.';ringColor='#1D9E75';}
+  else if(pct>=67){perfTitle='Bom Desempenho';perfMsg='Você assimilou os conceitos fundamentais, mas algumas nuances analíticas merecem aprofundamento. Revise os feedbacks das questões com divergência.';ringColor='#EF9F27';}
+  else{perfTitle='Necessita Revisão';perfMsg='Há espaço para consolidação do conhecimento. Recomenda-se releitura do texto-base, com atenção especial às fases da técnica, aos referenciais de profundidade e à dinâmica dos movimentos oscilatórios.';ringColor='#E24B4A';}
+
+  // Save to Firebase AFTER indexes are defined
+  const fbPayload = {
+    name: studentName, mat: studentMat, turma: studentTurma,
+    score: score, totalQ: Q.length, pct: pct,
+    correctIdxs: corrIdxs, wrongIdxs: wrongIdxs,
+    wrongThemes: wrongIdxs.map(i=>Q[i].theme),
+    timestamp: new Date().toISOString()
+  };
+  saveToFirebase(fbPayload);
+
+  const corrListHtml=corrIdxs.length>0
+    ?corrIdxs.map(i=>`<div class="c-item"><div class="chk"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><span class="qtag">Q${i+1}</span> — ${Q[i].theme}</div></div>`).join('')
+    :'<p style="font-size:13.5px;color:var(--gray600)">Nenhuma questão correta.</p>';
+
+  const wrongListHtml=wrongIdxs.length>0
+    ?wrongIdxs.map(i=>`<div class="w-item"><div class="w-num">Questão ${i+1}</div><div class="w-theme">${Q[i].theme}</div><div class="w-tip">${Q[i].tip}</div><span class="wpill">${Q[i].lbl}</span></div>`).join('')
+    :'<p style="font-size:13.5px;color:var(--gray600)">Nenhum erro registrado!</p>';
+
+  const recHtml=wrongIdxs.length>0
+    ?wrongIdxs.map(i=>`<div class="rec-i"><span class="rec-bul">›</span><span>Aprofunde: <strong>${Q[i].theme}</strong> — retome o trecho no texto de Deus (1992) e busque artigos nas bases SciELO, BVS e PubMed.</span></div>`).join('')
+    :`<div class="rec-i"><span class="rec-bul">›</span><span>Desempenho perfeito! Avance para artigos contemporâneos que aprofundem estes princípios em correlação com sistemas NiTi rotatórios e reciprocantes.</span></div>`;
+
+  // Build share text
+  const now=new Date();
+  const dtStr=now.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+  const lines = [
+    'RESULTADO — Questionário de Endodontia',
+    'Técnica de Movimentos Oscilatórios (Deus, 1992)',
+    '════════════════════════════════════════',
+    'Aluno: ' + studentName,
+    'Matrícula: ' + studentMat,
+    'Turma: ' + studentTurma,
+    'Data/Hora: ' + dtStr,
+    '════════════════════════════════════════',
+    'Pontuação: ' + score + ' / ' + Q.length + ' (' + pct + '%)',
+    'Classificação: ' + perfTitle,
+    '════════════════════════════════════════',
+    'Questões corretas (' + corrIdxs.length + '):',
+  ].concat(
+    corrIdxs.length > 0
+      ? corrIdxs.map(i => '  • Q' + (i+1) + ': ' + Q[i].theme)
+      : ['  (nenhuma)'],
+    [''],
+    ['Questões incorretas (' + wrongIdxs.length + '):'],
+    wrongIdxs.length > 0
+      ? wrongIdxs.map(i => '  • Q' + (i+1) + ': ' + Q[i].theme)
+      : ['  (nenhum)'],
+    ['════════════════════════════════════════']
+  );
+  const shareText = lines.join('\n');
+
+  const deg=Math.round((score/Q.length)*360);
+  const ringBg=`conic-gradient(${ringColor} ${deg}deg, #e4e2db ${deg}deg)`;
+
+  panel.innerHTML=`
+    <div class="res-hero">
+      <div class="score-ring" style="background:${ringBg}">
+        <div class="score-inner"><div class="s-big">${score}/${Q.length}</div><div class="s-den">${pct}%</div></div>
+      </div>
+      <div class="res-title">${perfTitle}</div>
+      <div class="res-pct">${score} correta${score!==1?'s':''} · ${Q.length-score} incorreta${(Q.length-score)!==1?'s':''}</div>
+      <div class="res-msg">${perfMsg}</div>
+    </div>
+    <div class="res-body">
+      <div style="background:#E1F5EE;border:1px solid #1D9E75;border-radius:var(--rad);padding:.85rem 1.1rem;margin-bottom:1.25rem;font-size:13px;color:#085041;line-height:1.6">
+        <strong>Identificação:</strong> ${studentName} · Matrícula ${studentMat} · Turma ${studentTurma}
+      </div>
+      <div class="stat-grid">
+        <div class="scard ok"><div class="sc-lbl">Corretas</div><div class="sc-num">${score}</div><div class="sc-sub">de ${Q.length} (${pct}%)</div></div>
+        <div class="scard ng"><div class="sc-lbl">Incorretas</div><div class="sc-num">${Q.length-score}</div><div class="sc-sub">de ${Q.length} (${100-pct}%)</div></div>
+      </div>
+      <div class="sec-title">Questões corretas</div>
+      <div class="c-list">${corrListHtml}</div>
+      ${wrongIdxs.length>0?`
+      <div class="sec-title">Temas que necessitam revisão</div>
+      <div class="w-list">${wrongListHtml}</div>
+      <div class="rec-box">
+        <div class="sec-title">Orientações de estudo dirigido</div>
+        <div class="rec-list">${recHtml}</div>
+      </div>`:''}
+      <div class="share-box">
+        <div class="sec-title">Envio ao professor</div>
+        <p class="share-desc">Copie o texto abaixo e envie ao professor por e-mail, WhatsApp ou pelo ambiente virtual de aprendizagem. Você também pode imprimir esta página.</p>
+        <textarea class="share-text" id="share-ta" rows="14" readonly>${shareText}</textarea>
+        <div class="share-row">
+          <button class="share-btn primary" onclick="copyResult()">Copiar resultado</button>
+          <button class="share-btn" onclick="window.print()">Imprimir / Salvar PDF</button>
+        </div>
+        <p id="copy-msg" style="font-size:12px;color:var(--t600);margin-top:.5rem;display:none">✓ Texto copiado com sucesso!</p>
+      </div>
+    </div>`;
+
+  panel.classList.add('vis');
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Lock: warn if user tries to leave or reload after completing
+  window.addEventListener('beforeunload', function(e){
+    e.preventDefault();
+    e.returnValue = '';
+  });
+  // Prevent back-button navigation from resetting the quiz
+  history.pushState(null, '', location.href);
+  window.addEventListener('popstate', function(){
+    history.pushState(null, '', location.href);
+  });
+}
+
+function copyResult(){
+  const ta=document.getElementById('share-ta');
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    const msg=document.getElementById('copy-msg');
+    msg.style.display='block';
+    setTimeout(()=>msg.style.display='none',3000);
+  }).catch(()=>{ta.select();document.execCommand('copy');});
+}
+
+
+// ═══════════════════════════════════════════════
+//  FIREBASE SAVE (optional — graceful degradation)
+// ═══════════════════════════════════════════════
+const FB_URL = (()=>{
+  // Student quiz reads FB URL from URL param ?db=https://...
+  // e.g.: quiz_aluno.html?db=https://meu-projeto-rtdb.firebaseio.com
+  try{
+    const p=new URLSearchParams(window.location.search);
+    return (p.get('db')||'').replace(/\/$/,'');
+  }catch{return '';}
+})();
+
+async function saveToFirebase(resultObj){
+  if(!FB_URL) return; // no Firebase configured — silent skip
+  try{
+    const r = await fetch(`${FB_URL}/quiz_endodontia_resultados.json`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(resultObj)
+    });
+    if(!r.ok) console.warn('Firebase save failed:', r.status);
+  }catch(e){ console.warn('Firebase save error:', e.message); }
+}
+
+</script>
+</body>
+</html>
